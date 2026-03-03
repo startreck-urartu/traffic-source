@@ -93,31 +93,41 @@ export default async function handler(req, res) {
       }
     }
 
-    db.prepare(
-      `INSERT OR IGNORE INTO conversions (
-        site_id, session_id, visitor_id, stripe_event_id,
-        stripe_customer_id, stripe_customer_email, payment_intent_id,
-        amount, currency, status,
-        utm_source, utm_medium, utm_campaign, referrer_domain
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).run(
-      site.id,
-      sessionId,
-      visitorId,
-      event.id,
-      session.customer || null,
-      session.customer_email ||
-        session.customer_details?.email ||
-        null,
-      session.payment_intent || null,
-      amount,
-      currency,
-      'completed',
-      utmSource,
-      utmMedium,
-      utmCampaign,
-      referrerDomain
-    );
+    const paymentIntentId = session.payment_intent || session.id || null;
+
+    // Deduplicate: skip if a conversion with the same payment_intent already exists
+    // (both checkout.session.completed and payment_intent.succeeded fire for the same payment)
+    const existing = paymentIntentId
+      ? db.prepare('SELECT id FROM conversions WHERE payment_intent_id = ? AND site_id = ?').get(paymentIntentId, site.id)
+      : null;
+
+    if (!existing) {
+      db.prepare(
+        `INSERT OR IGNORE INTO conversions (
+          site_id, session_id, visitor_id, stripe_event_id,
+          stripe_customer_id, stripe_customer_email, payment_intent_id,
+          amount, currency, status,
+          utm_source, utm_medium, utm_campaign, referrer_domain
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).run(
+        site.id,
+        sessionId,
+        visitorId,
+        event.id,
+        session.customer || null,
+        session.customer_email ||
+          session.customer_details?.email ||
+          null,
+        paymentIntentId,
+        amount,
+        currency,
+        'completed',
+        utmSource,
+        utmMedium,
+        utmCampaign,
+        referrerDomain
+      );
+    }
   }
 
   if (event.type === 'charge.refunded') {
