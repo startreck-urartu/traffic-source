@@ -63,28 +63,6 @@ export default function Affiliates() {
           </button>
         </div>
 
-        {/* Totals */}
-        {data?.totals && (
-          <div className="metric-strip" style={{ marginBottom: 20 }}>
-            <div className="metric-card">
-              <span className="metric-label">Total Visits</span>
-              <span className="metric-value">{data.totals.visits.toLocaleString()}</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Unique Visitors</span>
-              <span className="metric-value">{data.totals.unique_visitors.toLocaleString()}</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Conversions</span>
-              <span className="metric-value">{data.totals.conversions.toLocaleString()}</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Revenue</span>
-              <span className="metric-value">${(data.totals.revenue / 100).toFixed(2)}</span>
-            </div>
-          </div>
-        )}
-
         {/* Affiliates table */}
         <div className="panel" style={{ marginBottom: 20 }}>
           <div className="panel-header">

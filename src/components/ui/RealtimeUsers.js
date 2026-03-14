@@ -2,34 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { getCountryName } from '@/lib/formatters';
 import CountryFlag from './CountryFlag';
-
-const BROWSER_ICONS = {
-  Chrome: 'chrome',
-  Firefox: 'firefox',
-  Safari: 'safari',
-  Edge: 'edge',
-  Opera: 'opera',
-  Samsung: 'samsung',
-  Brave: 'brave',
-};
-
-function BrowserIcon({ name }) {
-  const label = name || 'Unknown';
-  const key = Object.keys(BROWSER_ICONS).find((b) => label.includes(b));
-  if (key) {
-    return (
-      <img
-        className="realtime-browser-icon"
-        src={`https://cdn.jsdelivr.net/gh/nicedoc/browser-icons/icons/${BROWSER_ICONS[key]}.svg`}
-        alt={key}
-        title={label}
-        width={14}
-        height={14}
-      />
-    );
-  }
-  return <span className="realtime-browser-text" title={label}>{label}</span>;
-}
+import TechIcon from './TechIcon';
 
 export default function RealtimeUsers() {
   const [data, setData] = useState(null);
@@ -86,7 +59,7 @@ export default function RealtimeUsers() {
               </div>
               <div className="realtime-row-bottom">
                 <span className="realtime-source">{user.source || 'Direct'}</span>
-                <BrowserIcon name={user.browser} />
+                <TechIcon type="browser" name={user.browser} />
               </div>
             </div>
           ))}
