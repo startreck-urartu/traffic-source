@@ -4,6 +4,8 @@ Open-source, self-hosted web analytics with conversion tracking and affiliate ma
 
 **No monthly fees. No data sharing. No limits.**
 
+![Traffic Source Dashboard](demo-image.png)
+
 ## Features
 
 - **Real-time Analytics** — Live visitor count, pageviews, sessions, bounce rate, and session duration
