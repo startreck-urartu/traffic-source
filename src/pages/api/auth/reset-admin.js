@@ -3,14 +3,14 @@ import { hashPassword, generateToken, setAuthCookie } from '@/lib/auth';
 
 // ONE-TIME USE: Delete and re-create admin. Remove this file after first login.
 export default async function handler(req, res) {
-  const secret = req.headers['x-reset-secret'];
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const secret = req.headers['x-reset-secret'] || req.query.secret;
   const validSecret = process.env.JWT_SECRET || 'cadcam-reset-2026';
   if (secret !== validSecret) {
     return res.status(403).json({ error: 'Forbidden' });
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { email, password, name } = req.body;
